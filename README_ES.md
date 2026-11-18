@@ -12,7 +12,7 @@ Script de PowerShell para Windows de movimiento automático del ratón, evita qu
 
 > ⚠️ Limitaciones del entorno
 > Las máquinas virtuales y algunas sesiones de escritorio remoto interceptan la API `SetCursorPos`, el ratón no se moverá. El software de seguridad puede bloquear las llamadas del script a las interfaces del sistema Windows.
-> En algunos dispositivos solo funciona el movimiento del ratón y no se puede evitar el apagado del monitor.
+> En algunos dispositivos solo funciona el movimiento del ratón y no se puede evitar el apagado del monitor,También puede estar relacionado con la política de energía del sistema.
 
 ## Lista de archivos
 ### `mouse_move.ps1` - **【Script principal｜Versión estable】**

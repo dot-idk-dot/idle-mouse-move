@@ -12,7 +12,7 @@ Windows PowerShell auto‑mouse‑move script, used to avoid system determining 
 
 > ⚠️ Environment Limitations
 > Virtual machines and some remote desktop sessions will intercept `SetCursorPos` API, mouse cannot move; security software may block script calling Windows system interfaces.
-> On some devices, only mouse movement works and cannot prevent monitor from turning off.
+> On some devices, only mouse movement works and cannot prevent monitor from turning off,It may also be related to the system power policy.
 
 ## File List
 ### `mouse_move.ps1` - **【Main Script｜Release Version】**

@@ -12,7 +12,7 @@ Script PowerShell Windows de déplacement automatique de la souris, destiné à 
 
 > ⚠️ Limites d’environnement
 > Les machines virtuelles et certaines sessions de bureau à distance interceptent l’API `SetCursorPos`, la souris ne bougera pas ; les logiciels de sécurité peuvent bloquer les appels du script aux interfaces système Windows.
-> Sur certains appareils, seul le mouvement de la souris fonctionne et l’arrêt de l’écran ne peut pas être empêché.
+> Sur certains appareils, seul le mouvement de la souris fonctionne et l’arrêt de l’écran ne peut pas être empêché,Cela peut aussi être lié à la stratégie d’alimentation du système.
 
 ## Liste des fichiers
 ### `mouse_move.ps1` - **【Script principal｜Version stable】**
