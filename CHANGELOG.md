@@ -36,6 +36,7 @@
 - 更换了版本号为三段式
 ### Fixed
 - 修复了方括号缺失的问题
+- 修复了`README.md,README_EN.md`中的错误内容
 
 
 # Changelog
@@ -76,3 +77,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Adjusted the version number to a three-segment format
 ### Fixed
 - Fixed missing square brackets
+- Fixed incorrect content in `README.md` and `README_EN.md`
