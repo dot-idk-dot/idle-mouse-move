@@ -1,4 +1,5 @@
 # 鼠标自动移动防闲置脚本（Idle-Mouse-Move）
+![Mouse Move](assets/mouse_move.gif)
 ## 📌 介绍
 Windows PowerShell 鼠标自动移动脚本，用于避免系统判定长时间闲置。
 - ✅ 鼠标往复移动：向左偏移指定像素，等待一段时间后返回，循环执行

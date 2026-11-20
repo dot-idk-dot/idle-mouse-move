@@ -1,4 +1,5 @@
 # Idle-Mouse‑Move
+![Mouse Move](assets/mouse_move.gif)
 ## About
 Windows PowerShell auto‑mouse‑move script, used to avoid system determining long‑time idle.
 - ✅ Reciprocating mouse movement: offset left specified pixels, wait for a period of time then move back, loop execution

@@ -19,7 +19,7 @@ public class Power {
 }
 "@
 
-Power::PreventSleep()
+[Power]::PreventSleep()
 Write-Host "System sleep prevention: Enabled" -ForegroundColor Green
 
 Add-Type -TypeDefinition @"
