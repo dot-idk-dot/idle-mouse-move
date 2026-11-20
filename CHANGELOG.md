@@ -34,6 +34,8 @@
 - 为`README.md,README_EN.md`添加了演示图
 - 为`CHANGELOG.md`添加了英文翻译
 - 更换了版本号为三段式
+- 修改了`README.md,README_EN.md`的开头部分
+- 为`README_EN`添加了Emoji
 ### Fixed
 - 修复了方括号缺失的问题
 - 修复了`README.md,README_EN.md`中的错误内容
@@ -75,6 +77,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Added preview images to `README.md`, `README_EN.md`
 - Added English translation for `CHANGELOG.md`
 - Adjusted the version number to a three-segment format
+- Updated the opening sections of `README.md` and `README_EN.md`
+- Added emojis to `README_EN`
 ### Fixed
 - Fixed missing square brackets
 - Fixed incorrect content in `README.md` and `README_EN.md`
