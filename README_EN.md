@@ -12,7 +12,7 @@ Close the window and everything goes back to normal.
 
 
 ## 📌 Introduction
-### Who Needs This
+### 🎯 Who Needs This
 - **Company computers locked by group policy** — Can't open Control Panel, can't change power plans, forced lock screen every 5 minutes
 - **Displays/all-in-ones with firmware that ignores settings** — System says "Never", but the screen still turns off anyway
 - **Remote desktop keep-alive** — RDP drops the moment the local machine sleeps; when the API is blocked, mouse movement fallback has you covered
