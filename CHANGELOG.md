@@ -40,6 +40,14 @@
 - 修复了方括号缺失的问题
 - 修复了`README.md,README_EN.md`中的错误内容
 
+## [1.1.0] - 2026-11-22
+### Added
+- 为正式版添加了自动改电源设置（退出时复原）的功能
+### Fixed
+- 修复了无法正确阻止系统休眠的问题
+### Changed
+- 更改`run_test.ps1`的文件名为`test_power.ps1`
+
 
 # Changelog
 All notable changes to this project will be documented in this file.
@@ -56,7 +64,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Added
 - Created the main script
 - Added `LICENSE`, `.gitignore`
-
 ### Changed
 - Fixed incorrect commas in `README.md`
 
@@ -82,3 +89,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Fixed
 - Fixed missing square brackets
 - Fixed incorrect content in `README.md` and `README_EN.md`
+
+
+## [1.1.0] - 2026-11-22
+### Added
+- Added automatic power setting modification for the standard version (with automatic restoration on exit)
+### Fixed
+- Fixed the issue where the system could not be properly prevented from sleeping
+### Changed
+- Renamed `run_test.ps1` to `test_power.ps1`

@@ -13,14 +13,57 @@ public class Power {
     public const uint ES_SYSTEM_REQUIRED = 0x00000001;
     public const uint ES_DISPLAY_REQUIRED = 0x00000002;
 
-    public static void PreventSleep() {
-        SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+    public static uint PreventSleep() {
+        // Set all three flags: ES_CONTINUOUS, ES_SYSTEM_REQUIRED, ES_DISPLAY_REQUIRED
+        // ES_CONTINUOUS: Continue setting execution state
+        // ES_SYSTEM_REQUIRED: Prevent system entering sleep mode
+        // ES_DISPLAY_REQUIRED: Prevent display from going into low-power state
+        uint result = SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+        return result;
+    }
+
+    public static void ResetSleepState() {
+        // Clear all sleep prevention flags
+        SetThreadExecutionState(ES_CONTINUOUS);
     }
 }
 "@
 
-[Power]::PreventSleep()
-Write-Host "System sleep prevention: Enabled" -ForegroundColor Green
+# Prevent system sleep using SetThreadExecutionState
+Write-Host "Setting sleep prevention flags..." -ForegroundColor Yellow
+$result = [Power]::PreventSleep()
+
+if ($result -eq 0) {
+    Write-Host "ERROR: SetThreadExecutionState failed! Return value: $result" -ForegroundColor Red
+    Write-Host "This usually means the script is not running with Administrator privileges." -ForegroundColor Red
+    Write-Host "Please run as Administrator: Right-click PowerShell -> 'Run as Administrator'" -ForegroundColor Yellow
+    exit 1
+} else {
+    Write-Host "SUCCESS: Sleep prevention enabled (Return value: $result)" -ForegroundColor Green
+    Write-Host "Flags set: ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED" -ForegroundColor Cyan
+}
+
+# Disable unattended sleep timeout (Windows 10/11 has 2-minute default)
+Write-Host "Disabling unattended sleep timeout..." -ForegroundColor Yellow
+$dcTimeout = 0
+$acTimeout = 0
+
+try {
+    $dcOutput = powercfg /getactivevalueindex SCHEME_CURRENT SUB_SLEEP STANDBYIDLE 2>&1 | Out-String
+    if ($dcOutput -match "(\d+)") { $dcTimeout = [int]$matches[1] }
+} catch {}
+
+try {
+    $acOutput = powercfg /getactivevalueindex SCHEME_CURRENT SUB_SLEEP STANDBYIDLE 2>&1 | Out-String
+    if ($acOutput -match "(\d+)") { $acTimeout = [int]$matches[1] }
+} catch {}
+
+Write-Host "Current settings: DC timeout=$dcTimeout sec, AC timeout=$acTimeout sec" -ForegroundColor Gray
+
+# Use correct alias: STANDBYIDLE (not DCINDEX/ACINDEX)
+$null = Start-Process -FilePath "powercfg" -ArgumentList "/setdcvalueindex SCHEME_CURRENT SUB_SLEEP STANDBYIDLE 0" -Wait -NoNewWindow
+$null = Start-Process -FilePath "powercfg" -ArgumentList "/setacvalueindex SCHEME_CURRENT SUB_SLEEP STANDBYIDLE 0" -Wait -NoNewWindow
+Write-Host "Unattended sleep timeout disabled" -ForegroundColor Green
 
 Add-Type -TypeDefinition @"
 using System;
@@ -46,15 +89,14 @@ $leftMoveTime = 5000
 $rightMoveTime = 5000
 
 Write-Host "Mouse auto-move script started..." -ForegroundColor Green
+Write-Host "Press Ctrl+C to stop" -ForegroundColor Cyan
 
-# Helper function to get current position
 function Get-MousePosition {
     $point = New-Object Mouse+POINT
     [Mouse]::GetCursorPos([ref]$point)
     return $point
 }
 
-# Helper function to move mouse
 function Set-MousePosition {
     param([int]$X, [int]$Y)
     [Mouse]::SetCursorPos($X, $Y)
@@ -62,36 +104,12 @@ function Set-MousePosition {
     return $true
 }
 
-Write-Host "Initial move left 50px..." -ForegroundColor Yellow
-
-# Initial move left
-$point = Get-MousePosition
-Write-Host "Current position: X=$($point.X), Y=$($point.Y)" -ForegroundColor White
-Set-MousePosition -X ($point.X - $moveAmount) -Y $point.Y
-
-# Wait 5 seconds
-Start-Sleep -Milliseconds $leftMoveTime
-
-Write-Host "Move right 50px..." -ForegroundColor Yellow
-
-# Move right
-$point = Get-MousePosition
-Write-Host "Current position: X=$($point.X), Y=$($point.Y)" -ForegroundColor White
-Set-MousePosition -X ($point.X + $moveAmount) -Y $point.Y
-
-# Wait 5 seconds
-Start-Sleep -Milliseconds $rightMoveTime
-
-Write-Host "Starting loop..." -ForegroundColor Cyan
-Write-Host "Left move 50px..." -ForegroundColor Yellow
-
-# Loop movement
 $loopCount = 0
 while ($true) {
     $loopCount++
 
     # Move left 50px
-    Write-Host "[$loopCount] Move left 50px..." -ForegroundColor Yellow
+    Write-Host "[$loopCount] Left: X=$($point.X) -> $($point.X - $moveAmount)" -ForegroundColor Yellow
 
     $point = Get-MousePosition
     $newX = $point.X - $moveAmount
@@ -103,7 +121,7 @@ while ($true) {
     Start-Sleep -Milliseconds $leftMoveTime
 
     # Move right 50px
-    Write-Host "[$loopCount] Move right 50px..." -ForegroundColor Yellow
+    Write-Host "[$loopCount] Right: X=$($point.X) -> $($point.X + $moveAmount)" -ForegroundColor Yellow
 
     $point = Get-MousePosition
     $newX = $point.X + $moveAmount
@@ -113,4 +131,25 @@ while ($true) {
     # Wait 5 seconds
     Write-Host "  Waiting 5 seconds..." -ForegroundColor Gray
     Start-Sleep -Milliseconds $rightMoveTime
+}
+
+# Restore original power settings on exit
+trap {
+    Write-Host "`n" -NoNewline
+    Write-Host "Restoring original power settings..." -ForegroundColor Yellow
+
+    if ($dcTimeout -ne 0) {
+        $null = Start-Process -FilePath "powercfg" -ArgumentList "/setdcvalueindex SCHEME_CURRENT SUB_SLEEP STANDBYIDLE $dcTimeout" -Wait -NoNewWindow
+        Write-Host "Restored DC timeout to $dcTimeout seconds" -ForegroundColor Cyan
+    }
+
+    if ($acTimeout -ne 0) {
+        $null = Start-Process -FilePath "powercfg" -ArgumentList "/setacvalueindex SCHEME_CURRENT SUB_SLEEP STANDBYIDLE $acTimeout" -Wait -NoNewWindow
+        Write-Host "Restored AC timeout to $acTimeout seconds" -ForegroundColor Cyan
+    }
+
+    Write-Host "Done! Press any key to exit..." -ForegroundColor Green
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    [Power]::ResetSleepState()
+    exit
 }
